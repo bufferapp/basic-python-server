@@ -1,0 +1,35 @@
+name: basic-python # Override to be the name of the application
+namespace: tools-public
+deploymentUrl: "basicpython.buffertools.com"
+chart: "buffercharts/buffer-service"
+chartVersion: "1.1.1"
+cdEnabled: true
+cdBranchEnabled: false
+dockerfile: Dockerfile
+channel: eng-proj-kuberdash
+clusterName: "kubeeast"
+track: stable # stable | canary
+replicaCount: 1
+image:
+  repository: bufferapp/basic-python # Override with the docker image
+  tag: latest # this will be overriden by the build process
+  pullPolicy: Always
+healthcheck: # checkout https://github.com/bufferapp/EKG for complete docs
+  enabled: false
+# enable the ingress open up the service to the public internet
+extraSpecs:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  minReadySeconds: 3
+service:
+  enabled: true
+  externalPort: 80
+  internalPort: 5000
+ingress:
+  enabled: true
+  path: /
+  annotations:
+    kubernetes.io/ingress.class: nginx
